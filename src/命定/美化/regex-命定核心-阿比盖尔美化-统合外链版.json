@@ -1,15 +1,19 @@
 {
-  "id": "f5a4f0b8-8fb9-4f2b-8d4a-3fe2bb353a10",
-  "scriptName": "命定核心-阿比盖尔美化-统合外链版",
-  "disabled": false,
-  "runOnEdit": true,
-  "findRegex": "<Foreigner\\b[^>]*name=[\"']?([^\"'>\\s]+)[\"']?[^>]*mood=[\"']?([^\"'>\\s]+)[\"']?[^>]*>([\\s\\S]*?)<\\/Foreigner>",
-  "trimStrings": [],
-  "replaceString": "```\n<body>\n<iframe src=\"https://cdn.jsdelivr.net/gh/KazamiYuryou/SillyTavern-Abigail-UI-Style@main/src/%E5%91%BD%E5%AE%9A/%E7%BE%8E%E5%8C%96/%E9%98%BF%E6%AF%94%E7%9B%96%E5%B0%94-%E7%BB%9F%E5%90%88%E5%A4%96%E9%93%BE%E7%BE%8E%E5%8C%96.html?name=$1&mood=$2&content=$3\" style=\"border:none;width:100%;max-width:100%;height:clamp(300px,32vw,360px);\" frameborder=\"0\" loading=\"lazy\"></iframe>\n</body>\n```",
-  "placement": [2],
-  "substituteRegex": 1,
-  "minDepth": null,
-  "maxDepth": null,
-  "markdownOnly": true,
-  "promptOnly": false
+    "id":  "f5a4f0b8-8fb9-4f2b-8d4a-3fe2bb353a10",
+    "scriptName":  "命定核心-阿比盖尔美化-统合外链版",
+    "disabled":  false,
+    "runOnEdit":  true,
+    "findRegex":  "\u003cForeigner\\b[^\u003e]*name=[\"\u0027]?([^\"\u0027\u003e\\s]+)[\"\u0027]?[^\u003e]*mood=[\"\u0027]?([^\"\u0027\u003e\\s]+)[\"\u0027]?[^\u003e]*\u003e([\\s\\S]*?)\u003c\\/Foreigner\u003e",
+    "trimStrings":  [
+
+                    ],
+    "replaceString":  "\u003cdiv class=\"abby-bridge\" style=\"display:none\"\u003e\u003cspan class=\"abby-raw-name\"\u003e$1\u003c/span\u003e\u003cspan class=\"abby-raw-mood\"\u003e$2\u003c/span\u003e\u003cdiv class=\"abby-raw-content\"\u003e$3\u003c/div\u003e\u003c/div\u003e\n\u003ciframe style=\"border:none;width:100%;max-width:100%;height:clamp(300px,32vw,360px);\" frameborder=\"0\" loading=\"lazy\" referrerpolicy=\"no-referrer\"\u003e\u003c/iframe\u003e\n\u003cscript\u003e\n(()=\u003e{\n  const script = document.currentScript;\n  if (!script) return;\n\n  const frame = script.previousElementSibling;\n  const bridge = frame \u0026\u0026 frame.previousElementSibling;\n  if (!frame || !bridge) return;\n\n  const name = (bridge.querySelector(\u0027.abby-raw-name\u0027)?.textContent || \u0027\u0027).trim() || \u0027阿比盖尔\u0027;\n  const moodRaw = (bridge.querySelector(\u0027.abby-raw-mood\u0027)?.textContent || \u0027\u0027).trim();\n  const contentHtml = (bridge.querySelector(\u0027.abby-raw-content\u0027)?.innerHTML || \u0027\u0027).trim();\n\n  const moodAlias = {\n    \u0027高兴\u0027: \u0027高兴\u0027, \u0027开心\u0027: \u0027高兴\u0027, \u0027喜悦\u0027: \u0027高兴\u0027,\n    \u0027悲伤\u0027: \u0027悲伤\u0027, \u0027难过\u0027: \u0027悲伤\u0027,\n    \u0027害羞\u0027: \u0027害羞\u0027,\n    \u0027生气\u0027: \u0027生气\u0027, \u0027愤怒\u0027: \u0027生气\u0027,\n    \u0027疑惑\u0027: \u0027疑惑\u0027, \u0027困惑\u0027: \u0027疑惑\u0027\n  };\n\n  const mood = moodAlias[moodRaw] || \u0027高兴\u0027;\n  const skinRaw = (typeof getVar === \u0027function\u0027 \u0026\u0026 getVar(\u0027system_skin\u0027) !== undefined) ? String(getVar(\u0027system_skin\u0027)) : \u00270\u0027;\n  const skinSafe = /^(0|1|2|3)$/.test(skinRaw) ? skinRaw : \u00270\u0027;\n\n  const hosts = [\u0027testingcf.jsdelivr.net\u0027, \u0027fastly.jsdelivr.net\u0027, \u0027gcore.jsdelivr.net\u0027, \u0027cdn.jsdelivr.net\u0027];\n  const repoPath = \u0027gh/KazamiYuryou/SillyTavern-Abigail-UI-Style@main/src/%E5%91%BD%E5%AE%9A/%E7%BE%8E%E5%8C%96/%E9%98%BF%E6%AF%94%E7%9B%96%E5%B0%94-%E7%BB%9F%E5%90%88%E5%A4%96%E9%93%BE%E7%BE%8E%E5%8C%96.html\u0027;\n\n  const loadByHost = async (index) =\u003e {\n    if (index \u003e= hosts.length) return;\n    const host = hosts[index];\n    const templateUrl = \u0027https://\u0027 + host + \u0027/\u0027 + repoPath;\n\n    try {\n      const resp = await fetch(templateUrl, { mode: \u0027cors\u0027 });\n      if (!resp.ok) throw new Error(String(resp.status));\n\n      const html = await resp.text();\n      frame.srcdoc = html;\n\n      frame.addEventListener(\u0027load\u0027, () =\u003e {\n        const doc = frame.contentDocument;\n        if (!doc) return;\n\n        const nameEl = doc.querySelector(\u0027.abby-name-text\u0027);\n        const contentEl = doc.querySelector(\u0027.abby-yog-content\u0027);\n        const portraitEl = doc.querySelector(\u0027.portrait-inner\u0027);\n\n        if (nameEl) nameEl.textContent = name;\n        if (contentEl) contentEl.innerHTML = contentHtml || \u0027「Master，阿比在这里。」\u0027;\n\n        if (portraitEl) {\n          const portraitUrl = \u0027https://\u0027 + host + \u0027/gh/AkabaneSaki/myrepo@main/picture/abby/\u0027 + encodeURIComponent(mood + skinSafe + \u0027.png\u0027);\n          portraitEl.style.backgroundImage = `url(\u0027${portraitUrl}\u0027)`;\n        }\n      }, { once: true });\n    } catch (error) {\n      loadByHost(index + 1);\n    }\n  };\n\n  loadByHost(0);\n})();\n\u003c/script\u003e",
+    "placement":  [
+                      2
+                  ],
+    "substituteRegex":  1,
+    "minDepth":  null,
+    "maxDepth":  null,
+    "markdownOnly":  true,
+    "promptOnly":  false
 }

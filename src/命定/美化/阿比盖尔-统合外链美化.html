@@ -1800,13 +1800,15 @@
         }
 
         // GitHub 仓库中的资源通过 jsDelivr 分发，方便直接做外链版本
+        var cdnFallbackHosts = ['testingcf.jsdelivr.net', 'fastly.jsdelivr.net', 'gcore.jsdelivr.net', 'cdn.jsdelivr.net'];
         var assetConfig = {
+          cdnHost: getUrlParam('cdnHost') || 'testingcf.jsdelivr.net',
           avatarRepo: getUrlParam('avatarRepo') || 'AkabaneSaki/myrepo',
           avatarRef: getUrlParam('avatarRef') || 'main',
           avatarPath: (getUrlParam('avatarPath') || 'picture/abby').replace(/^\/+|\/+$/g, ''),
         };
 
-        function buildJsDelivrUrl(repo, ref, path) {
+        function buildJsDelivrUrl(repo, ref, path, cdnHost) {
           var safePath = String(path || '')
             .split('/')
             .filter(Boolean)
@@ -1814,16 +1816,46 @@
               return encodeURIComponent(segment);
             })
             .join('/');
-          return 'https://cdn.jsdelivr.net/gh/' + repo + '@' + ref + '/' + safePath;
+          return 'https://' + (cdnHost || assetConfig.cdnHost) + '/gh/' + repo + '@' + ref + '/' + safePath;
         }
 
-        function getPortraitUrl(mood) {
+        function getPortraitUrl(mood, cdnHost) {
           var mappedMood = moodAlias[mood] || mood || defaults.mood;
           return buildJsDelivrUrl(
             assetConfig.avatarRepo,
             assetConfig.avatarRef,
             assetConfig.avatarPath + '/' + mappedMood + '0.png',
+            cdnHost,
           );
+        }
+
+        function normalizeCdnHost(host) {
+          if (!host) return cdnFallbackHosts[0];
+          return host.replace(/^https?:\/\//i, '').replace(/\/+$/g, '');
+        }
+
+        function applyPortraitWithFallback(mood) {
+          if (!portraitEl) return;
+          var startHost = normalizeCdnHost(assetConfig.cdnHost);
+          var hosts = [startHost].concat(cdnFallbackHosts.filter(function (host) {
+            return host !== startHost;
+          }));
+          var idx = 0;
+
+          function tryNextHost() {
+            if (idx >= hosts.length) return;
+            var host = hosts[idx++];
+            var url = getPortraitUrl(mood, host);
+            var img = new Image();
+            img.onload = function () {
+              assetConfig.cdnHost = host;
+              portraitEl.style.backgroundImage = "url('" + url + "')";
+            };
+            img.onerror = tryNextHost;
+            img.src = url;
+          }
+
+          tryNextHost();
         }
 
         // 更新页面内容的函数
@@ -1833,9 +1865,7 @@
           // 替换台词内容
           if (contentEl) contentEl.textContent = content || defaults.content;
           // 替换头像图片 (通过拼凑 URL 路径)
-          if (portraitEl) {
-            portraitEl.style.backgroundImage = "url('" + getPortraitUrl(mood) + "')";
-          }
+          applyPortraitWithFallback(mood);
         }
 
         updateContent(defaults.name, defaults.mood, defaults.content);
