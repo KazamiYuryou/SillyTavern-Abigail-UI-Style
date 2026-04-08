@@ -1,0 +1,395 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>阿比盖尔核心美化-表(美化2) replaceString 预览</title>
+  <style>
+    :root {
+      --void: #040918;
+      --void-2: #0b122e;
+      --line: rgba(176, 203, 255, 0.45);
+      --line-soft: rgba(176, 203, 255, 0.2);
+      --text: #edf4ff;
+      --text-soft: #c9d6f5;
+      --accent: #8cb3ff;
+      --accent-2: #b8cbff;
+      --panel: rgba(8, 14, 30, 0.72);
+      --panel-border: rgba(184, 203, 255, 0.35);
+      --name-plate: rgba(10, 22, 54, 0.82);
+      --name-plate-border: rgba(199, 219, 255, 0.6);
+      --portrait-w: clamp(96px, 11vw, 138px);
+      --portrait-h: calc(var(--portrait-w) * 1.33);
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background: transparent;
+    }
+
+    body {
+      padding: 14px;
+      box-sizing: border-box;
+      overflow: visible;
+      font-family: 'Noto Serif SC', 'Microsoft YaHei', serif;
+      color: var(--text);
+    }
+
+    .abby-yog-card {
+      position: relative;
+      width: min(100%, 1160px);
+      margin: 0 auto;
+      padding: clamp(14px, 2.2vw, 24px);
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      color: var(--text);
+      background:
+        radial-gradient(130% 90% at 50% 120%, rgba(36, 60, 120, 0.26), transparent 68%),
+        linear-gradient(180deg, rgba(12, 20, 44, 0.48), rgba(6, 10, 24, 0.6));
+      box-shadow:
+        0 0 22px rgba(80, 116, 206, 0.28),
+        0 10px 28px rgba(0, 0, 0, 0.52),
+        inset 0 0 0 1px rgba(196, 216, 255, 0.14);
+      contain: layout paint style;
+      content-visibility: auto;
+      contain-intrinsic-size: 520px 300px;
+    }
+
+    .abby-bg {
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      z-index: -2;
+      background:
+        radial-gradient(140% 100% at 80% 0%, rgba(53, 87, 174, 0.24), transparent 55%),
+        radial-gradient(110% 120% at 20% 80%, rgba(36, 68, 132, 0.2), transparent 62%),
+        linear-gradient(160deg, var(--void-2), var(--void));
+    }
+
+    .nebula,
+    .star-layer,
+    .dust-layer {
+      position: absolute;
+      inset: -35%;
+      pointer-events: none;
+    }
+
+    .nebula {
+      background:
+        radial-gradient(33% 30% at 25% 28%, rgba(120, 162, 255, 0.24), transparent 72%),
+        radial-gradient(28% 24% at 72% 66%, rgba(106, 138, 235, 0.2), transparent 74%);
+      filter: blur(14px);
+      opacity: 0.68;
+      transform: translateZ(0);
+      animation: nebula-drift 46s ease-in-out infinite alternate;
+    }
+
+    .star-layer {
+      background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+      background-repeat: repeat;
+      mix-blend-mode: screen;
+      opacity: 0.5;
+      transform-origin: 50% 50%;
+    }
+
+    .stars-far {
+      background-size: 880px;
+      animation: star-spin 260s linear infinite;
+      opacity: 0.34;
+    }
+
+    .stars-mid {
+      background-size: 560px;
+      animation: star-spin 170s linear infinite reverse;
+      opacity: 0.42;
+    }
+
+    .stars-near {
+      background-size: 360px;
+      animation: star-pan 92s linear infinite;
+      opacity: 0.28;
+    }
+
+    .dust-layer {
+      background-image: radial-gradient(1px 1px at 30% 30%, rgba(255,255,255,0.8), transparent 1.5px);
+      background-size: 210px 210px;
+      opacity: 0.18;
+      animation: dust-fall 22s linear infinite;
+    }
+
+    .abby-dialog {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: clamp(12px, 2vw, 20px);
+      align-items: start;
+      min-height: var(--portrait-h);
+    }
+
+    .portrait-wrap {
+      width: var(--portrait-w);
+      height: var(--portrait-h);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(199, 219, 255, 0.72);
+      box-shadow:
+        0 0 16px rgba(120, 156, 248, 0.38),
+        0 8px 20px rgba(0, 0, 0, 0.52);
+      background: #03070f;
+      transform: rotate(-0.6deg);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .portrait-wrap:hover {
+      transform: rotate(0deg) scale(1.02);
+      box-shadow:
+        0 0 18px rgba(120, 156, 248, 0.45),
+        0 10px 22px rgba(0, 0, 0, 0.58);
+    }
+
+    .portrait-inner {
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center top;
+      filter: contrast(1.08) saturate(1.05);
+    }
+
+    .portrait-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(to bottom, transparent 58%, rgba(5, 10, 24, 0.78)),
+        linear-gradient(135deg, rgba(200,220,255,0.1), transparent 44%);
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.45);
+    }
+
+    .dialog-main {
+      min-width: 0;
+    }
+
+    .name-plate {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      max-width: min(100%, 460px);
+      padding: 6px 14px;
+      margin-bottom: 10px;
+      border-radius: 999px;
+      border: 1px solid var(--name-plate-border);
+      background:
+        linear-gradient(180deg, rgba(43, 72, 150, 0.28), rgba(12, 28, 66, 0.66)),
+        var(--name-plate);
+      box-shadow:
+        0 0 10px rgba(126, 163, 255, 0.34),
+        inset 0 0 0 1px rgba(212, 227, 255, 0.18);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    .name-icon {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #ffffff, #a8c3ff 60%, rgba(168,195,255,0) 72%);
+      box-shadow: 0 0 8px rgba(194, 215, 255, 0.8);
+      flex: none;
+    }
+
+    .abby-name-text {
+      font-family: 'Cinzel', 'Noto Serif SC', serif;
+      font-size: clamp(1.06em, 0.98em + 0.24vw, 1.34em);
+      letter-spacing: 1.4px;
+      color: #f7fbff;
+      text-shadow: 0 0 8px rgba(176, 203, 255, 0.65);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dialog-box {
+      position: relative;
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      padding: clamp(10px, 1.4vw, 16px) clamp(12px, 1.8vw, 18px);
+      background:
+        linear-gradient(180deg, rgba(24, 35, 72, 0.22), rgba(8, 14, 30, 0.62)),
+        var(--panel);
+      box-shadow:
+        inset 0 0 0 1px rgba(226, 236, 255, 0.06),
+        0 8px 18px rgba(0, 0, 0, 0.32);
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+      overflow: hidden;
+    }
+
+    .dialog-box::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.08) 1px, transparent 1px);
+      background-size: 3px 3px;
+      opacity: 0.14;
+      mix-blend-mode: soft-light;
+    }
+
+    .dialog-box::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: 10px;
+      box-shadow: inset 0 0 18px rgba(118, 154, 242, 0.15);
+    }
+
+    .abby-yog-content {
+      position: relative;
+      z-index: 2;
+      color: var(--text);
+      font-size: clamp(.95em, .9em + .18vw, 1.06em);
+      line-height: 1.78;
+      letter-spacing: .2px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.78);
+      word-break: break-word;
+    }
+
+    .abby-yog-content p { margin: .3em 0; }
+
+    .signal-core {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      width: 48px;
+      height: 48px;
+      pointer-events: none;
+      z-index: 4;
+      opacity: .88;
+    }
+
+    .signal-core::before,
+    .signal-core::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(179, 206, 255, 0.4);
+      animation: pulse-ring 2.4s ease-out infinite;
+    }
+
+    .signal-core::after {
+      animation-delay: 1.2s;
+    }
+
+    .signal-dot {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 6px;
+      height: 6px;
+      margin-left: -3px;
+      margin-top: -3px;
+      border-radius: 50%;
+      background: #eef6ff;
+      box-shadow: 0 0 10px rgba(184, 211, 255, 0.9);
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 8px; }
+      .abby-yog-card { width: min(100%, 97vw); padding: 12px; }
+      .abby-dialog {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        min-height: auto;
+      }
+      .portrait-wrap {
+        width: 88px;
+        height: 117px;
+        transform: none;
+      }
+      .dialog-main { min-width: 0; }
+      .signal-core { top: auto; bottom: 10px; right: 10px; width: 40px; height: 40px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .nebula,
+      .star-layer,
+      .dust-layer,
+      .signal-core::before,
+      .signal-core::after {
+        animation: none !important;
+      }
+      .portrait-wrap,
+      .abby-yog-card {
+        transition: none !important;
+      }
+    }
+
+    @keyframes star-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes star-pan {
+      from { transform: translate3d(0, 0, 0); }
+      to { transform: translate3d(-100px, -70px, 0); }
+    }
+
+    @keyframes dust-fall {
+      from { transform: translate3d(0, -12px, 0); }
+      to { transform: translate3d(0, 12px, 0); }
+    }
+
+    @keyframes nebula-drift {
+      from { transform: translate3d(-18px, 4px, 0) scale(1.01); }
+      to { transform: translate3d(14px, -6px, 0) scale(1.03); }
+    }
+
+    @keyframes pulse-ring {
+      0% { transform: scale(.35); opacity: .8; }
+      100% { transform: scale(1.1); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="abby-yog-card">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet" />
+
+    <div class="abby-bg">
+      <div class="nebula"></div>
+      <div class="star-layer stars-far"></div>
+      <div class="star-layer stars-mid"></div>
+      <div class="star-layer stars-near"></div>
+      <div class="dust-layer"></div>
+    </div>
+
+    <div class="signal-core"><div class="signal-dot"></div></div>
+
+    <div class="abby-dialog">
+      <div class="portrait-wrap">
+        <div class="portrait-inner" style="background-image: url('https://cdn.jsdelivr.net/gh/AkabaneSaki/myrepo@main/picture/abby/高兴0.png');"></div>
+        <div class="portrait-overlay"></div>
+      </div>
+
+      <div class="dialog-main">
+        <div class="name-plate">
+          <span class="name-icon"></span>
+          <span class="abby-name-text">阿比盖尔</span>
+        </div>
+
+        <div class="dialog-box">
+          <div class="abby-yog-content">「Master，阿比已经准备好了哦♪」</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+

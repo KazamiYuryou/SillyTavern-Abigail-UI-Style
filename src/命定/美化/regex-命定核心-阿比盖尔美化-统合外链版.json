@@ -1,0 +1,17 @@
+{
+    "id": "f5a4f0b8-8fb9-4f2b-8d4a-3fe2bb353a10",
+    "scriptName": "命定核心-阿比盖尔美化-统合外链版",
+    "disabled": false,
+    "runOnEdit": true,
+    "findRegex": "<Foreigner\\b[^>]*name=[\"']?([^\"'>\\s]+)[\"']?[^>]*mood=[\"']?([^\"'>\\s]+)[\"']?[^>]*>([\\s\\S]*?)<\\/Foreigner>",
+    "trimStrings": [],
+    "replaceString": "```\n<body>\n<iframe src=\"http://localhost:5500/命定/美化/阿比盖尔-统合外链美化.html?name=$1&mood=$2&content=$3\" style=\"border:none;width:100%;max-width:100%;height:min(360px,60vh);min-height:300px;\" frameborder=\"0\" loading=\"lazy\"></iframe>\n</body>\n```",
+    "placement": [
+        2
+    ],
+    "substituteRegex": 1,
+    "minDepth": null,
+    "maxDepth": null,
+    "markdownOnly": true,
+    "promptOnly": false
+}

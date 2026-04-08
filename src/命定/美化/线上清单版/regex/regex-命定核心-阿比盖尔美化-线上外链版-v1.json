@@ -1,0 +1,15 @@
+﻿{
+  "id": "1c59ea8a-1a88-4f7d-a5b4-c1881f19c54a",
+  "scriptName": "命定核心-阿比盖尔美化-线上外链版(v1)",
+  "disabled": true,
+  "runOnEdit": true,
+  "findRegex": "<Foreigner\\b(?=[^>]*\\bname=[\"'](?:.*?)[\"'])(?=[^>]*\\bmood=[\"'](?:.*?)[\"'])[^>]*\\bname=[\"'](.*?)[\"'][^>]*\\bmood=[\"'](.*?)[\"'][^>]*>\\s*(?:[「『“\"]\\s*)?([\\s\\S]*?)(?:\\s*[」』”\"])?\\s*<\\/Foreigner>",
+  "trimStrings": [],
+  "replaceString": "<div class=\"abby-bridge\" style=\"display:none\"><span class=\"abby-raw-name\">$1</span><span class=\"abby-raw-mood\">$2</span><div class=\"abby-raw-content\">$3</div></div><script>(()=>{const bridge=document.currentScript&&document.currentScript.previousElementSibling;if(!bridge)return;const name=(bridge.querySelector('.abby-raw-name')?.textContent||'').trim()||'阿比盖尔';const moodRaw=(bridge.querySelector('.abby-raw-mood')?.textContent||'').trim();const contentHtml=(bridge.querySelector('.abby-raw-content')?.innerHTML||'').trim();const moodAlias={'高兴':'高兴','开心':'高兴','喜悦':'高兴','悲伤':'悲伤','难过':'悲伤','害羞':'害羞','生气':'生气','愤怒':'生气','疑惑':'疑惑','困惑':'疑惑'};const mood=moodAlias[moodRaw]||'高兴';const skinRaw=(typeof getVar==='function'&&getVar('system_skin')!==undefined)?String(getVar('system_skin')):'0';const skinSafe=/^(0|1|2|3)$/.test(skinRaw)?skinRaw:'0';const portraitUrl=`https://cdn.jsdelivr.net/gh/AkabaneSaki/myrepo@main/picture/abby/${mood}${skinSafe}.png`;const templateUrl='https://cdn.jsdelivr.net/gh/<YOUR_GH_USER>/<YOUR_REPO>@<TAG>/templates/abby-galaxy-dialog-v1.html';if(typeof $!=='function')return;$(document.body).load(templateUrl,()=>{const root=document.body.querySelector('.abby-yog-card');if(!root)return;const nameEl=root.querySelector('.abby-name-text');const contentEl=root.querySelector('.abby-yog-content');const portraitEl=root.querySelector('.portrait-inner');if(nameEl)nameEl.textContent=name;if(contentEl)contentEl.innerHTML=contentHtml||'「Master，阿比在这里。」';if(portraitEl){portraitEl.style.backgroundImage=`url('${portraitUrl}')`;const img=new Image();img.onerror=()=>{portraitEl.style.backgroundImage=\"url('https://cdn.jsdelivr.net/gh/AkabaneSaki/myrepo@main/picture/abby/高兴0.png')\";};img.src=portraitUrl;}});})();</script>",
+  "placement": [2],
+  "substituteRegex": 1,
+  "minDepth": null,
+  "maxDepth": null,
+  "markdownOnly": true,
+  "promptOnly": false
+}
