@@ -1,8 +1,5 @@
-﻿<!doctype html>
-<html lang="zh-CN">
-  <head></head>
-  <body>
-    <div class="abby-yog-container" data-template-ver="v20260408-github-jsdelivr">
+﻿<template>
+<div class="abby-yog-container" data-template-ver="v20260408-github-jsdelivr">
       <div class="bg-wrapper">
         <div class="aurora-layer">
           <div class="aurora-band aurora-1"></div>
@@ -80,18 +77,13 @@
             <div class="pf-corner pf-bl"></div>
             <div class="pf-corner pf-br"></div>
             <div class="portrait-gem"></div>
-            <div
-              class="portrait-inner"
-              style="
-                background-image: url('https://cdn.jsdelivr.net/gh/AkabaneSaki/myrepo@main/picture/abby/%E9%AB%98%E5%85%B40.png');
-              "
-            ></div>
+            <div class="portrait-inner" :style="portraitStyle"></div>
             <div class="portrait-overlay"></div>
           </div>
           <div class="dialog-main">
             <div class="name-plate">
               <span class="name-icon"></span>
-              <span class="abby-name-text">阿比盖尔</span>
+              <span class="abby-name-text">{{ displayName }}</span>
             </div>
             <div class="dialog-box">
               <div class="dialog-inner-deco"></div>
@@ -99,13 +91,50 @@
               <div class="dialog-corner dc-tr"></div>
               <div class="dialog-corner dc-bl"></div>
               <div class="dialog-corner dc-br"></div>
-              <div class="abby-yog-content">「Master，阿比已经准备好了哦♪」</div>
+              <div class="abby-yog-content" v-html="displayContent"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
-</body>
-</html>
+</template>
 
+<script setup lang="ts">
+import { computed } from 'vue';
 
+const props = withDefaults(
+  defineProps<{
+    name?: string;
+    mood?: string;
+    content?: string;
+    skin?: string;
+  }>(),
+  {
+    name: '阿比盖尔',
+    mood: '高兴',
+    content: '「Master，阿比已经准备好了哦♪」',
+    skin: '0',
+  },
+);
+
+const moodAlias: Record<string, string> = {
+  高兴: '高兴',
+  开心: '高兴',
+  喜悦: '高兴',
+  悲伤: '悲伤',
+  难过: '悲伤',
+  害羞: '害羞',
+  生气: '生气',
+  愤怒: '生气',
+  疑惑: '疑惑',
+  困惑: '疑惑',
+};
+
+const displayName = computed(() => props.name?.trim() || '阿比盖尔');
+const displayContent = computed(() => props.content?.trim() || '「Master，阿比已经准备好了哦♪」');
+const safeSkin = computed(() => (/^(0|1|2|3)$/.test(props.skin ?? '') ? props.skin! : '0'));
+const safeMood = computed(() => moodAlias[props.mood?.trim() || ''] || '高兴');
+const portraitStyle = computed(() => ({
+  backgroundImage: `url('https://testingcf.jsdelivr.net/gh/AkabaneSaki/myrepo@main/picture/abby/${encodeURIComponent(`${safeMood.value}${safeSkin.value}.png`)}')`,
+}));
+</script>
