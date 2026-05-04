@@ -51,7 +51,11 @@ function common_path(lhs: string, rhs: string) {
 function glob_script_files() {
   const results: string[] = [];
 
+<<<<<<< HEAD
   fs.globSync(`src/**/index.{ts,tsx,js,jsx}`)
+=======
+  fs.globSync(`{示例,src}/**/index.{ts,tsx,js,jsx}`)
+>>>>>>> 83d9038af3d5ad60dd9744400c8b94779c47044e
     .filter(
       file => process.env.CI !== 'true' || !fs.readFileSync(path.join(import.meta.dirname, file)).includes('@no-ci'),
     )
@@ -71,8 +75,11 @@ function glob_script_files() {
       results.push(file);
     });
 
+<<<<<<< HEAD
   results.push(...fs.globSync('util/*.ts'));
 
+=======
+>>>>>>> 83d9038af3d5ad60dd9744400c8b94779c47044e
   return results;
 }
 
@@ -216,11 +223,19 @@ function parse_configuration(entry: Entry): (_env: any, argv: any) => webpack.Co
       path: path.join(
         import.meta.dirname,
         'dist',
+<<<<<<< HEAD
         path.relative(import.meta.dirname, script_filepath.dir).replace(/^(?:(?!util)[^\\/])+[\\/]/, ''),
       ),
       chunkFilename: `${script_filepath.name}.[contenthash].chunk.js`,
       asyncChunks: true,
       clean: entry.script.includes('util') ? false : true,
+=======
+        path.relative(import.meta.dirname, script_filepath.dir).replace(/^[^\\/]+[\\/]/, ''),
+      ),
+      chunkFilename: `${script_filepath.name}.[contenthash].chunk.js`,
+      asyncChunks: true,
+      clean: true,
+>>>>>>> 83d9038af3d5ad60dd9744400c8b94779c47044e
       publicPath: '',
       library: {
         type: 'module',
